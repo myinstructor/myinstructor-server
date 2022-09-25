@@ -1,1 +1,3 @@
-export const registerUser = (req, res, next) => {};
+export const registerUser = (req, res, next) => {
+  //Register USer
+};
