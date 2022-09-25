@@ -2,6 +2,8 @@ import express from "express";
 import "dotenv/config";
 import { connectToDatabase } from "./database/database.js";
 import userRoutes from "./routes/user_routes.js";
+import { errorMiddleware } from "./middlewares/error_middleware.js";
+import Errorhandler from "./middlewares/handle_error.js";
 
 // initializing app
 const app = express();
@@ -27,3 +29,5 @@ app.get("/", (req, res, next) => {
 app.listen(PORT, () =>
   console.log("Myinstructor server listening to port " + PORT + "...")
 );
+
+app.use(errorMiddleware);
