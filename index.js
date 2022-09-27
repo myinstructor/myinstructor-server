@@ -3,10 +3,14 @@ import "dotenv/config";
 import { connectToDatabase } from "./database/database.js";
 import userRoutes from "./routes/user_routes.js";
 import { errorMiddleware } from "./middlewares/error_middleware.js";
-import Errorhandler from "./middlewares/handle_error.js";
+import bodyParser from "body-parser";
 
 // initializing app
 const app = express();
+
+// bodyparser
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // initializing necessery variable and port
 const PORT = process.env.PORT || 5000;
