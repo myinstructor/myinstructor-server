@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 var validateEmail = function (email) {
   var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -49,6 +50,14 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  resetPasswordHex: {
+    type: String,
+    select: false,
+  },
+  resetPasswordOtpTime: {
+    type: Date,
+    select: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),
@@ -77,6 +86,10 @@ userSchema.methods.passwordComparison = async function (password) {
   }
 };
 
-userSchema.methods.passwordComparison = async function (password) {};
+userSchema.methods.resetPasswordRequest = async function () {
+  const hexString = await crypto.randomBytes(16).toString("hex");
+  this.resetPasswordHex = hexString;
+  this.resetPasswordOtpTime = Date.now() + 5 * 60 * 60 * 1000;
+};
 
 export const userModel = mongoose.model("user", userSchema);

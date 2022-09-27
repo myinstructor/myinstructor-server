@@ -19,7 +19,7 @@ export const loginUser = catchAsyncError(async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password)
-    return next(new Errorhandler("Please Fill Out All Field", 400));
+    return next(new Errorhandler(400, "Please Fill Out All The Field"));
   const user = await userModel.findOne({ email }).select("+password");
 
   const validPass = await user.passwordComparison(password);
@@ -28,5 +28,26 @@ export const loginUser = catchAsyncError(async (req, res, next) => {
   res.status(403).json({
     success: false,
     message: "You Entered Wrong Credentials",
+  });
+});
+
+export const forgetPassword = catchAsyncError(async (req, res, next) => {
+  const { email } = req.body;
+
+  const user = await userModel.findOne({ email });
+  if (!user) next(new Errorhandler(404, "No User Found With This Email"));
+  await user.resetPasswordRequest();
+
+  user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Please Check Your Email",
+  });
+});
+
+export const resetPassword = catchAsyncError(async (req, res, next) => {
+  res.status(200).json({
+    success: true,
   });
 });
