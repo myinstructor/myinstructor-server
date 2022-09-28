@@ -2,6 +2,7 @@ import express from "express";
 import "dotenv/config";
 import { connectToDatabase } from "./database/database.js";
 import userRoutes from "./routes/user_routes.js";
+import instructorApplicantRoute from "./routes/instructor_applicant_route.js";
 import { errorMiddleware } from "./middlewares/error_middleware.js";
 import bodyParser from "body-parser";
 
@@ -20,6 +21,7 @@ connectToDatabase();
 
 // App Routes
 app.use("/api", userRoutes);
+app.use("/api", instructorApplicantRoute);
 
 // home request
 app.get("/", (req, res, next) => {
