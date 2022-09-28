@@ -50,11 +50,11 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  resetPasswordHex: {
+  resetPasswordToken: {
     type: String,
     select: false,
   },
-  resetPasswordOtpTime: {
+  resetPasswordTime: {
     type: Date,
     select: false,
   },
@@ -69,6 +69,11 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 12);
 });
 
+// reset password
+userSchema.methods.resetAndHashPassword = async function (password) {
+  this.password = await bcrypt.hash(password, 12);
+};
+
 // generate jwt token
 userSchema.methods.generateJwtToken = function () {
   return jwt.sign({ id: this.id }, process.env.JWT_SECRET, {
@@ -79,7 +84,6 @@ userSchema.methods.generateJwtToken = function () {
 // compare password
 userSchema.methods.passwordComparison = async function (password) {
   const validPass = await bcrypt.compare(password, this.password);
-
   if (!validPass) return false;
   else {
     return true;
@@ -88,8 +92,8 @@ userSchema.methods.passwordComparison = async function (password) {
 
 userSchema.methods.resetPasswordRequest = async function () {
   const hexString = await crypto.randomBytes(16).toString("hex");
-  this.resetPasswordHex = hexString;
-  this.resetPasswordOtpTime = Date.now() + 5 * 60 * 60 * 1000;
+  this.resetPasswordToken = hexString;
+  this.resetPasswordTime = Date.now() + 1 * 60 * 1000;
 };
 
 export const userModel = mongoose.model("user", userSchema);

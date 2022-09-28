@@ -47,6 +47,26 @@ export const forgetPassword = catchAsyncError(async (req, res, next) => {
 });
 
 export const resetPassword = catchAsyncError(async (req, res, next) => {
+  const { token, id, newPassword } = req.body;
+  if (!token || !id || !newPassword)
+    next(new Errorhandler(404, `Token or Id Not Found`));
+
+  const user = await userModel
+    .findById(id)
+    .select("+resetPasswordToken")
+    .select("+resetPasswordTime");
+
+  // matching the token
+  if (Date.now() > user.resetPasswordTime) {
+    return next(new Errorhandler(500, `Token Time Out`));
+  }
+
+  if (token !== user.resetPasswordToken)
+    return next(new Errorhandler(403, `Token Is Not Valid`));
+
+  user.password = newPassword;
+  await user.save();
+
   res.status(200).json({
     success: true,
   });
