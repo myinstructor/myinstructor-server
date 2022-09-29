@@ -3,6 +3,7 @@ import "dotenv/config";
 import { connectToDatabase } from "./database/database.js";
 import userRoutes from "./routes/user_routes.js";
 import instructorApplicantRoute from "./routes/instructor_applicant_route.js";
+import instructorRoute from "./routes/instructor_routes.js";
 import { errorMiddleware } from "./middlewares/error_middleware.js";
 import bodyParser from "body-parser";
 
@@ -22,6 +23,12 @@ connectToDatabase();
 // App Routes
 app.use("/api", userRoutes);
 app.use("/api", instructorApplicantRoute);
+app.use("/api", instructorRoute);
+
+// image request
+app.use("/uploads", express.static("./uploads"), (req, res, next) => {
+  next();
+});
 
 // home request
 app.get("/", (req, res, next) => {
