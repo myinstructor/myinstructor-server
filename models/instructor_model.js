@@ -64,16 +64,22 @@ const instructorSchema = mongoose.Schema({
     numberPlate: { type: String, required: true },
     image: { type: String },
   },
-  serviceSubrubs: [
-    {
-      name: { type: String, required: true },
-      postCode: { type: String, required: true },
-    },
-  ],
+  serviceSuburbs: {
+    suburbs: [
+      {
+        name: { type: String, required: true },
+        postCode: { type: String, required: true },
+      },
+    ],
+  },
   password: {
     type: String,
     required: true,
     select: false,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
   },
 });
 

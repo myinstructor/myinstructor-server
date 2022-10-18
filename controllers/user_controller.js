@@ -22,6 +22,9 @@ export const loginUser = catchAsyncError(async (req, res, next) => {
     return next(new Errorhandler(400, "Please Fill Out All The Field"));
   const user = await userModel.findOne({ email }).select("+password");
 
+  if (!user)
+    return next(new Errorhandler(400, "No User Found With This Email"));
+
   const validPass = await user.passwordComparison(password);
   if (validPass) return sendJwtToken(res, next, user);
 
