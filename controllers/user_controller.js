@@ -74,3 +74,19 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
     success: true,
   });
 });
+
+// add credit hours to user
+export const addCredit = catchAsyncError(async (req, res, next) => {
+  const { hour } = req.body;
+  if (!hour) return next(new Errorhandler(401, "Credit Hour Not Specified"));
+
+  const user = await userModel.findById(req.user._id);
+  user.credit = req.user.credit + parseInt(hour);
+  user.save();
+  console.log(user);
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
