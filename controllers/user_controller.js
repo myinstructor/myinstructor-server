@@ -90,3 +90,10 @@ export const addCredit = catchAsyncError(async (req, res, next) => {
     user,
   });
 });
+
+export const getCurrentUser = catchAsyncError(async (req, res, next) => {
+  res.status(200).json({
+    success: true,
+    user: req.user,
+  });
+});

@@ -1,1 +1,8 @@
-{ "engines": { "node": "16.x.x" } }
+runtime: nodejs16 # or another supported version
+
+# env values
+env_variables:
+  DB_URI: mongodb+srv://juhan:Iamjuhan@cluster0.5yhrs.mongodb.net/MyInstructor?retryWrites=true&w=majority
+  JWT_EXPIRE_DAY: 7d
+  JWT_SECRET: b8d98529d6a61a9f2907e736d4858cb4a5efe5554fa0803b12e94103b5d61fb9
+  STRIPE_KEY: sk_test_51Jk944Kqk54qfeAmFmWmgX9XXbXn9M0q4dX8f6TALnsILInA9C2fXb4AAmMqMHP4Oo7DtIkG6BBG3qTFUegrsHHL00oSrOYx4S

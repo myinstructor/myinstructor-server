@@ -1,20 +1,25 @@
 import express from "express";
-import "dotenv/config";
+
 import { connectToDatabase } from "./database/database.js";
+import { errorMiddleware } from "./middlewares/error_middleware.js";
+
 import userRoutes from "./routes/user_routes.js";
 import instructorApplicantRoute from "./routes/instructor_applicant_route.js";
 import instructorRoute from "./routes/instructor_routes.js";
 import paymentRoute from "./routes/payment_route.js";
-import { errorMiddleware } from "./middlewares/error_middleware.js";
+import bookingRoute from "./routes/booking_route.js";
+
 import bodyParser from "body-parser";
 import cors from "cors";
+import "dotenv/config";
 
 // initializing app
 const app = express();
 // applying cors middleware
+
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", "https://myinstructor.netlify.app"],
   })
 );
 // bodyparser
@@ -32,9 +37,10 @@ app.use("/api", userRoutes);
 app.use("/api", instructorApplicantRoute);
 app.use("/api", instructorRoute);
 app.use("/api", paymentRoute);
+app.use("/api", bookingRoute);
 
 // image request
-app.use("/uploads", express.static("./uploads"), (req, res, next) => {
+app.use("/uploads", express.static("./tmp/uploads"), (req, res, next) => {
   next();
 });
 
