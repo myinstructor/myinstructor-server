@@ -40,7 +40,7 @@ app.use("/api", paymentRoute);
 app.use("/api", bookingRoute);
 
 // image request
-app.use("/uploads", express.static("./tmp/uploads"), (req, res, next) => {
+app.use("/uploads", express.static("./tmp"), (req, res, next) => {
   next();
 });
 
