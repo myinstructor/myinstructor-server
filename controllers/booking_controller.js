@@ -4,12 +4,19 @@ import { Booking } from "../models/booking_model.js";
 import { userModel } from "../models/user_model.js";
 
 export const makeBooking = catchAsyncError(async (req, res, next) => {
-  if (!req.body)
+  if (!req.body.duration)
     return next(new Errorhandler(404, "Invalid Booking Information Provided"));
 
   const booking = await Booking.create({ ...req.body, user: req.user });
   const user = await userModel.findById(req.user._id);
 
+  if (user.credit < req.body.duration)
+    return next(
+      new Errorhandler(
+        403,
+        "You Don't Have Enough Credit's To Make This Booking"
+      )
+    );
   user.credit = user.credit - req.body.duration;
   await user.save();
 
