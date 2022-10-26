@@ -13,8 +13,6 @@ export const addInstructor = catchAsyncError(async (req, res, next) => {
     avater: req.file.filename,
   };
 
-  console.log(newInstructor);
-
   const userExist = await Instructor.findOne({ email: req.body?.email });
   if (userExist)
     next(new Errorhandler(500, "Instructor Already Exist With This Email"));
