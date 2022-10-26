@@ -3,27 +3,55 @@ import Errorhandler from "../middlewares/handle_error.js";
 import { sendJwtToken } from "../middlewares/sendJwtToken.js";
 import { Instructor } from "../models/instructor_model.js";
 import { Suburbs } from "../models/subrubs_model.js";
+import { gcloudStorage } from "../index.js";
+import { format } from "util";
 
 export const addInstructor = catchAsyncError(async (req, res, next) => {
-  const newInstructor = {
-    ...req.body,
-    languages: JSON.parse(req.body.languages),
-    car: JSON.parse(req.body.car),
-    serviceSuburbs: JSON.parse(req.body.serviceSubrubs),
-    avater: req.file.filename,
-  };
+  const bucket = gcloudStorage.bucket("my_instructor");
+  // ===========Image upload handleing===============
+  if (!req.file) {
+    // res.status(400).send("No file uploaded.");
+    return;
+  }
 
-  const userExist = await Instructor.findOne({ email: req.body?.email });
-  if (userExist)
-    next(new Errorhandler(500, "Instructor Already Exist With This Email"));
-
-  const instructor = await Instructor.create(newInstructor);
-
-  console.log(instructor);
-  res.status(200).json({
-    success: true,
-    instructor,
+  // Create a new blob in the bucket and upload the file data.
+  const blob = bucket.file(Date.now() + req.file.originalname);
+  const blobStream = blob.createWriteStream({
+    resumable: false,
   });
+
+  blobStream.on("error", (err) => {
+    next(err);
+    // res.send(404).send(false);
+  });
+
+  blobStream.on("finish", async () => {
+    // The public URL can be used to directly access the file via HTTP.
+    const publicUrl = format(
+      `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+    );
+    console.log(publicUrl);
+    // ============create instructor==============
+    const newInstructor = {
+      ...req.body,
+      languages: JSON.parse(req.body.languages),
+      car: JSON.parse(req.body.car),
+      serviceSuburbs: JSON.parse(req.body.serviceSubrubs),
+      avater: publicUrl,
+    };
+    const userExist = await Instructor.findOne({ email: req.body?.email });
+    if (userExist)
+      return next(
+        new Errorhandler(500, "Instructor Already Exist With This Email")
+      );
+    const instructor = await Instructor.create(newInstructor);
+    console.log(instructor);
+    res.status(200).json({
+      success: true,
+      instructor,
+    });
+  });
+  blobStream.end(req.file.buffer);
 });
 
 export const loginInstructor = catchAsyncError(async (req, res, next) => {

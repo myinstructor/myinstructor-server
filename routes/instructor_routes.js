@@ -7,11 +7,13 @@ import {
   searchsuburbs,
   singleInstructor,
 } from "../controllers/instructor_controller.js";
-import { upload } from "../utils/multer.js";
+import { multerProcess } from "../utils/multer.js";
 
 const router = Router();
 
-router.route("/add-instructor").post(upload.single("avater"), addInstructor);
+router
+  .route("/add-instructor")
+  .post(multerProcess.single("avater"), addInstructor);
 router.route("/login-instructor").post(loginInstructor);
 router.route("/instructor/:id").get(singleInstructor);
 router

@@ -9,9 +9,11 @@ import instructorRoute from "./routes/instructor_routes.js";
 import paymentRoute from "./routes/payment_route.js";
 import bookingRoute from "./routes/booking_route.js";
 
+import path, { dirname } from "path";
 import bodyParser from "body-parser";
 import cors from "cors";
 import "dotenv/config";
+import { Storage } from "@google-cloud/storage";
 
 // initializing app
 const app = express();
@@ -50,6 +52,12 @@ app.get("/", (req, res, next) => {
     success: true,
     message: "My Instructor Server Is Up And Running...",
   });
+});
+
+// google cloud storage
+export const gcloudStorage = new Storage({
+  keyFilename: "./first-energy-364305-29145b74aa26.json",
+  projectId: "first-energy-364305",
 });
 
 // listening to server
