@@ -60,3 +60,18 @@ export const changeBookingStatus = catchAsyncError(async (req, res, next) => {
     booking,
   });
 });
+
+// get booking by instructor
+export const getInstructorBookings = catchAsyncError(async (req, res, next) => {
+  const { instructor } = req.query;
+  if (!instructor)
+    return next(new Errorhandler(404, "Can't Find Instructor Id"));
+
+  const bookings = await Booking.find({ instructor });
+  console.log(bookings.length);
+
+  res.status(200).json({
+    success: true,
+    bookings,
+  });
+});
