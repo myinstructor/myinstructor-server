@@ -75,3 +75,16 @@ export const getInstructorBookings = catchAsyncError(async (req, res, next) => {
     bookings,
   });
 });
+
+// get booking by user
+export const getUserBookings = catchAsyncError(async (req, res, next) => {
+  const bookings = await Booking.find({ user: req.user._id }).populate(
+    "instructor"
+  );
+  console.log(bookings.length);
+
+  res.status(200).json({
+    success: true,
+    bookings,
+  });
+});

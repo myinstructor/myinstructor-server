@@ -2,6 +2,8 @@ import catchAsyncError from "../middlewares/catchAsyncError.js";
 import Errorhandler from "../middlewares/handle_error.js";
 import { sendJwtToken } from "../middlewares/sendJwtToken.js";
 import { userModel } from "../models/user_model.js";
+import { gcloudStorage } from "../index.js";
+import { format } from "util";
 
 export const registerUser = catchAsyncError(async (req, res, next) => {
   if (!req.body) next(new Errorhandler(404, "Email Or Password Not Found"));
@@ -96,4 +98,58 @@ export const getCurrentUser = catchAsyncError(async (req, res, next) => {
     success: true,
     user: req.user,
   });
+});
+
+export const editUser = catchAsyncError(async (req, res, next) => {
+  const userEdited = await userModel.findByIdAndUpdate(req.user._id, {
+    ...req.body,
+    email: req.user.email,
+  });
+  const user = await userModel.findById(req.user._id);
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+// update profile pic
+export const updateProfilePic = catchAsyncError(async (req, res, next) => {
+  console.log(req.file);
+  const bucket = gcloudStorage.bucket("my_instructor");
+  // ===========Image upload handleing===============
+  if (!req.file) {
+    // res.status(400).send("No file uploaded.");
+    return;
+  }
+
+  // Create a new blob in the bucket and upload the file data.
+  const blob = bucket.file(Date.now() + req.file.originalname);
+  const blobStream = blob.createWriteStream({
+    resumable: false,
+  });
+
+  blobStream.on("error", (err) => {
+    next(err);
+    res.status(500).json({
+      success: false,
+    });
+  });
+
+  blobStream.on("finish", async () => {
+    // The public URL can be used to directly access the file via HTTP.
+    const publicUrl = format(
+      `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+    );
+    const user = await userModel.findById(req.user._id);
+    user.avater = publicUrl;
+    user.save();
+
+    // response
+    return res.status(200).json({
+      success: true,
+      user,
+    });
+  });
+  blobStream.end(req.file.buffer);
 });

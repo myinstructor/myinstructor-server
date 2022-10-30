@@ -59,6 +59,9 @@ const userSchema = new mongoose.Schema({
     type: Date,
     select: false,
   },
+  avater: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),
