@@ -60,12 +60,12 @@ export const loginInstructor = catchAsyncError(async (req, res, next) => {
 
   const instructor = await Instructor.findOne({ email }).select("+password");
   if (!instructor)
-    next(new Errorhandler(404, `No Instructor Found With This Email`));
+    return next(new Errorhandler(404, `No Instructor Found With This Email`));
 
   const passwordValid = await instructor.passwordComparison(password);
   if (passwordValid) return sendJwtToken(res, next, instructor);
 
-  res.status(200).json({
+  res.status(500).json({
     success: false,
     message: "You Entered Wrong Credentials",
   });
@@ -130,3 +130,57 @@ export const searchsuburbs = catchAsyncError(async (req, res, next) => {
     suburbs,
   });
 });
+
+export const forgotInstructorPassword = catchAsyncError(
+  async (req, res, next) => {
+    const { email } = req.body;
+
+    const instructor = await Instructor.findOne({ email });
+    if (!instructor)
+      return next(new Errorhandler(404, "No Instructor Found With This Email"));
+    await instructor.resetPasswordRequest();
+
+    instructor.save();
+
+    console.log(
+      `http://localhost:3000/reset-password/instructor/${instructor?.resetPasswordToken}`
+    );
+    res.status(200).json({
+      success: true,
+      message: "Please Check Your Email, Password Reset Link Sent",
+    });
+  }
+);
+
+export const resetPasswordInstructor = catchAsyncError(
+  async (req, res, next) => {
+    const { token, newPassword } = req.body;
+    console.log(token, newPassword);
+    if (!token || !newPassword)
+      return next(new Errorhandler(404, `Token or Id Not Found`));
+
+    const instructor = await Instructor.findOne({ resetPasswordToken: token })
+      .select("+resetPasswordToken")
+      .select("+resetPasswordTime");
+
+    // matching the token
+    if (Date.now() > instructor.resetPasswordTime) {
+      return next(
+        new Errorhandler(
+          500,
+          `Your Link Already Expired, Please Resend Forget Password Request`
+        )
+      );
+    }
+
+    if (token !== instructor.resetPasswordToken)
+      return next(new Errorhandler(403, `Token Is Not Valid`));
+
+    instructor.password = newPassword;
+    await instructor.save();
+
+    res.status(200).json({
+      success: true,
+    });
+  }
+);

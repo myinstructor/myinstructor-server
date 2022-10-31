@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 var validateEmail = function (email) {
   var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -77,9 +78,21 @@ const instructorSchema = mongoose.Schema({
     required: true,
     select: false,
   },
+  resetPasswordToken: {
+    type: String,
+    select: false,
+  },
+  resetPasswordTime: {
+    type: Date,
+    select: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),
+  },
+  userType: {
+    type: String,
+    default: "instructor",
   },
 });
 
@@ -97,6 +110,12 @@ instructorSchema.methods.generateJwtToken = function () {
 instructorSchema.methods.passwordComparison = async function (password) {
   const validPass = await bcrypt.compare(password, this.password);
   return validPass;
+};
+
+instructorSchema.methods.resetPasswordRequest = async function () {
+  const hexString = await crypto.randomBytes(16).toString("hex");
+  this.resetPasswordToken = hexString;
+  this.resetPasswordTime = Date.now() + 2 * 60 * 1000;
 };
 
 export const Instructor = mongoose.model("Instructor", instructorSchema);

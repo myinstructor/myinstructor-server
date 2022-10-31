@@ -1,8 +1,10 @@
 import { Router } from "express";
 import {
   addInstructor,
+  forgotInstructorPassword,
   getAllsuburbs,
   loginInstructor,
+  resetPasswordInstructor,
   searchInstructor,
   searchsuburbs,
   singleInstructor,
@@ -21,5 +23,7 @@ router
   .get(searchInstructor);
 router.route("/suburbs").get(getAllsuburbs);
 router.route("/search-suburbs/:keyword").get(searchsuburbs);
+router.route("/forgot-password/instructor").post(forgotInstructorPassword);
+router.route("/reset-password/instructor").post(resetPasswordInstructor);
 
 export default router;

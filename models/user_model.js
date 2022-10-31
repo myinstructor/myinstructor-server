@@ -101,7 +101,7 @@ userSchema.methods.passwordComparison = async function (password) {
 userSchema.methods.resetPasswordRequest = async function () {
   const hexString = await crypto.randomBytes(16).toString("hex");
   this.resetPasswordToken = hexString;
-  this.resetPasswordTime = Date.now() + 1 * 60 * 1000;
+  this.resetPasswordTime = Date.now() + 2 * 60 * 1000;
 };
 
 export const userModel = mongoose.model("user", userSchema);

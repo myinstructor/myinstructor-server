@@ -47,17 +47,17 @@ export const forgetPassword = catchAsyncError(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: "Please Check Your Email",
+    message: "Please Check Your Email, Password Reset Link Sent",
   });
 });
 
 export const resetPassword = catchAsyncError(async (req, res, next) => {
-  const { token, id, newPassword } = req.body;
-  if (!token || !id || !newPassword)
+  const { token, newPassword } = req.body;
+  if (!token || !newPassword)
     next(new Errorhandler(404, `Token or Id Not Found`));
 
   const user = await userModel
-    .findById(id)
+    .findOne({ resetPasswordToken: token })
     .select("+resetPasswordToken")
     .select("+resetPasswordTime");
 
