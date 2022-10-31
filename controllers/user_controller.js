@@ -45,6 +45,10 @@ export const forgetPassword = catchAsyncError(async (req, res, next) => {
 
   user.save();
 
+  console.log(
+    `http://localhost:3000/reset-password/instructor/${user?.resetPasswordToken}`
+  );
+
   res.status(200).json({
     success: true,
     message: "Please Check Your Email, Password Reset Link Sent",

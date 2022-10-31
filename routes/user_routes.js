@@ -20,7 +20,7 @@ router.route("/edit-user").put(verifyUser, editUser);
 router
   .route("/update-avater")
   .put(verifyUser, multerProcess.single("avater"), updateProfilePic);
-router.route("/forget-password").post(forgetPassword);
+router.route("/forgot-password").post(forgetPassword);
 router.route("/reset-password").post(resetPassword);
 router.route("/add-credit").post(verifyUser, addCredit);
 export default router;
