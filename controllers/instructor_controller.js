@@ -88,9 +88,30 @@ export const singleInstructor = catchAsyncError(async (req, res, next) => {
 // get instructor based on suburbs
 export const searchInstructor = catchAsyncError(async (req, res, next) => {
   const { postCode, transmission } = req.params;
+  const { language } = req.query;
+  console.log(language);
 
   if (!postCode)
     return next(new Errorhandler(404, `No suburb Postcode Found `));
+
+  if (language && language !== "all") {
+    const instructors = await Instructor.find({
+      "serviceSuburbs.suburbs": { $elemMatch: { postCode } },
+      transmissionType: { $regex: transmission, $options: "i" },
+    });
+
+    const sortedInstructor = [];
+    instructors.forEach((instructor) => {
+      if (instructor.languages.includes(language)) {
+        sortedInstructor.push(instructor);
+      }
+    });
+
+    return res.status(200).json({
+      success: true,
+      instructors: sortedInstructor,
+    });
+  }
 
   const instructors = await Instructor.find({
     "serviceSuburbs.suburbs": { $elemMatch: { postCode } },
@@ -182,5 +203,62 @@ export const resetPasswordInstructor = catchAsyncError(
     res.status(200).json({
       success: true,
     });
+  }
+);
+
+// edit instructor
+export const editInstructor = catchAsyncError(async (req, res, next) => {
+  const userEdited = await Instructor.findByIdAndUpdate(req.user._id, {
+    ...req.body,
+    email: req.user.email,
+  });
+
+  const instructor = await Instructor.findById(req.user._id);
+  res.status(200).json({
+    success: true,
+    instructor,
+  });
+});
+
+// edit profile picture of instructor
+export const updateInstructorAvater = catchAsyncError(
+  async (req, res, next) => {
+    console.log(req.file);
+    const bucket = gcloudStorage.bucket("my_instructor");
+    // ===========Image upload handleing===============
+    if (!req.file) {
+      res.status(400).send("No Image Found");
+      return;
+    }
+
+    // Create a new blob in the bucket and upload the file data.
+    const blob = bucket.file(Date.now() + req.file.originalname);
+    const blobStream = blob.createWriteStream({
+      resumable: false,
+    });
+
+    blobStream.on("error", (err) => {
+      next(err);
+      res.status(500).json({
+        success: false,
+      });
+    });
+
+    blobStream.on("finish", async () => {
+      // The public URL can be used to directly access the file via HTTP.
+      const publicUrl = format(
+        `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+      );
+      const instructor = await Instructor.findById(req.user._id);
+      instructor.avater = publicUrl;
+      instructor.save();
+
+      // response
+      return res.status(200).json({
+        success: true,
+        instructor,
+      });
+    });
+    blobStream.end(req.file.buffer);
   }
 );

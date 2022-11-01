@@ -67,19 +67,21 @@ export const getInstructorBookings = catchAsyncError(async (req, res, next) => {
   if (!instructor)
     return next(new Errorhandler(404, "Can't Find Instructor Id"));
 
-  const bookings = await Booking.find({ instructor });
+  const bookings = await Booking.find({ instructor }).populate(
+    "instructor user"
+  );
   console.log(bookings.length);
 
   res.status(200).json({
     success: true,
-    bookings,
+    bookings: bookings.reverse(),
   });
 });
 
-// get booking by user
+// get booking by usery
 export const getUserBookings = catchAsyncError(async (req, res, next) => {
   const bookings = await Booking.find({ user: req.user._id }).populate(
-    "instructor"
+    "instructor user"
   );
 
   console.log(bookings.length);
