@@ -1,6 +1,7 @@
 import catchAsyncError from "../middlewares/catchAsyncError.js";
 import Errorhandler from "../middlewares/handle_error.js";
 import { Booking } from "../models/booking_model.js";
+import { Instructor } from "../models/instructor_model.js";
 import { userModel } from "../models/user_model.js";
 
 export const makeBooking = catchAsyncError(async (req, res, next) => {
@@ -31,10 +32,7 @@ export const findBooking = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
   if (!id) return next(new Errorhandler(404, "No Booking Id Provided"));
 
-  const booking = await Booking.findById(id).populate(
-    "user instructor",
-    "email avater firstName lastName"
-  );
+  const booking = await Booking.findById(id).populate("user instructor");
 
   if (!booking)
     return next(new Errorhandler(404, "No Booking Found With this id"));
@@ -50,10 +48,20 @@ export const changeBookingStatus = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
   const { status } = req.body;
 
-  if (!id || !status) return next(Errorhandler(404, "Invalid Request"));
-  zzz;
-  const booking = await Booking.findByIdAndUpdate(id, { status });
-  console.log(booking);
+  if (!id || !status) return next(new Errorhandler(404, "Invalid Request"));
+
+  const booking = await Booking.findById(id);
+  if (booking.status === "Ended")
+    return next(new Errorhandler(403, "Booking Already Ended"));
+  booking.status = status;
+  booking.save();
+
+  console.log(status, "booking status");
+  if (booking.status === "Ended") {
+    const instructor = await Instructor.findById(booking.instructor);
+    instructor.credit = instructor.credit + booking.duration;
+    instructor.save();
+  }
 
   res.status(200).json({
     success: true,
@@ -91,3 +99,5 @@ export const getUserBookings = catchAsyncError(async (req, res, next) => {
     bookings: bookings.reverse(),
   });
 });
+
+// confirm booking

@@ -18,9 +18,11 @@ export const verifyUser = async (req, res, next) => {
 
     // getting user from the req token and sendting it to the next middleware
     const user = await userModel.findById(res.id);
-    if (!user) return next(new Errorhandler(404, "User not found"));
+    const instructor = await Instructor.findById(res.id);
+    if (!user && !instructor)
+      return next(new Errorhandler(404, "User not found"));
 
-    req.user = user;
+    req.user = user || instructor;
     console.log(req.user);
     next();
   });
