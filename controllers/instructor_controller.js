@@ -5,6 +5,7 @@ import { Instructor } from "../models/instructor_model.js";
 import { Suburbs } from "../models/subrubs_model.js";
 import { gcloudStorage } from "../index.js";
 import { format } from "util";
+import { Booking } from "../models/booking_model.js";
 
 export const addInstructor = catchAsyncError(async (req, res, next) => {
   const bucket = gcloudStorage.bucket("my_instructor");
@@ -74,7 +75,9 @@ export const loginInstructor = catchAsyncError(async (req, res, next) => {
 // get single instructor
 export const singleInstructor = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
-  const instructor = await Instructor.findById(id);
+  const instructor = await Instructor.findById(id).populate();
+  // "reviews reviews.user"
+  // ();
 
   if (!instructor)
     next(new Errorhandler(404, `No Instructor Found With This Id`));
@@ -262,3 +265,35 @@ export const updateInstructorAvater = catchAsyncError(
     blobStream.end(req.file.buffer);
   }
 );
+
+// insert rating
+export const postRating = catchAsyncError(async (req, res, next) => {
+  const { rating, review, instructor, booking } = req.body;
+
+  console.log(booking, "current booking");
+
+  if (!rating || !review || !instructor || !booking)
+    return next(new Errorhandler(401, `Required Fields Not Found`));
+
+  const teacher = await Instructor.findById(instructor);
+  if (!teacher) return next(new Errorhandler(404, `Instructor Not Found`));
+
+  teacher.reviews.push({
+    user: `${req.user.firstName} ${req.user.lastName}`,
+    rating,
+    message: review,
+  });
+
+  const currentBooking = await Booking.findById(booking);
+  if (!currentBooking) return next(new Errorhandler(404, `Booking Not Found`));
+
+  currentBooking.reviewed = true;
+
+  currentBooking.save();
+  teacher.save();
+
+  res.status(200).json({
+    success: true,
+    instructor: teacher,
+  });
+});

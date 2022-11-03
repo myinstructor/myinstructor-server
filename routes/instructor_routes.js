@@ -5,13 +5,14 @@ import {
   forgotInstructorPassword,
   getAllsuburbs,
   loginInstructor,
+  postRating,
   resetPasswordInstructor,
   searchInstructor,
   searchsuburbs,
   singleInstructor,
   updateInstructorAvater,
 } from "../controllers/instructor_controller.js";
-import { verifyInstructor } from "../middlewares/verify_user.js";
+import { verifyInstructor, verifyUser } from "../middlewares/verify_user.js";
 import { multerProcess } from "../utils/multer.js";
 
 const router = Router();
@@ -36,5 +37,8 @@ router.route("/suburbs").get(getAllsuburbs);
 router.route("/search-suburbs/:keyword").get(searchsuburbs);
 router.route("/forgot-password/instructor").post(forgotInstructorPassword);
 router.route("/reset-password/instructor").post(resetPasswordInstructor);
+
+// review
+router.route("/instructor/review").post(verifyUser, postRating);
 
 export default router;
