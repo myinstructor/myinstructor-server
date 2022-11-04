@@ -297,3 +297,23 @@ export const postRating = catchAsyncError(async (req, res, next) => {
     instructor: teacher,
   });
 });
+
+export const changeInstructorAvailability = catchAsyncError(
+  async (req, res, next) => {
+    const { id } = req.params;
+    const { available } = req.body;
+
+    const instructor = await Instructor.findById(id);
+
+    if (!instructor)
+      return next(new Errorhandler(404, "No Instructor Found With This Id"));
+
+    instructor.available = available;
+    instructor.save();
+
+    res.status(200).json({
+      success: true,
+      instructor,
+    });
+  }
+);

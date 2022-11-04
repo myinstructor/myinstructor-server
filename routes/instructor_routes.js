@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   addInstructor,
+  changeInstructorAvailability,
   editInstructor,
   forgotInstructorPassword,
   getAllsuburbs,
@@ -37,6 +38,9 @@ router.route("/suburbs").get(getAllsuburbs);
 router.route("/search-suburbs/:keyword").get(searchsuburbs);
 router.route("/forgot-password/instructor").post(forgotInstructorPassword);
 router.route("/reset-password/instructor").post(resetPasswordInstructor);
+router
+  .route("/instructor/change-availability/:id")
+  .post(verifyUser, changeInstructorAvailability);
 
 // review
 router.route("/instructor/review").post(verifyUser, postRating);

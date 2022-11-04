@@ -41,6 +41,11 @@ const instructorSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  available: {
+    type: Boolean,
+    default: true,
+    required: true,
+  },
   transmissionType: {
     type: String,
     required: true,
