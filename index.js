@@ -8,6 +8,7 @@ import instructorApplicantRoute from "./routes/instructor_applicant_route.js";
 import instructorRoute from "./routes/instructor_routes.js";
 import paymentRoute from "./routes/payment_route.js";
 import bookingRoute from "./routes/booking_route.js";
+import adminRoute from "./routes/admin_route.js";
 
 import path, { dirname } from "path";
 import bodyParser from "body-parser";
@@ -40,6 +41,7 @@ app.use("/api", instructorApplicantRoute);
 app.use("/api", instructorRoute);
 app.use("/api", paymentRoute);
 app.use("/api", bookingRoute);
+app.use("/api/admin", adminRoute);
 
 // image request
 app.use("/uploads", express.static("./tmp"), (req, res, next) => {
