@@ -12,6 +12,10 @@ const bookingSchema = mongoose.Schema({
     ref: "Instructor",
     required: true,
   },
+  type: {
+    type: String,
+    required: true,
+  },
   reviewed: {
     type: Boolean,
     default: false,
