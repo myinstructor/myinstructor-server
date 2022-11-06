@@ -2,6 +2,7 @@ import catchAsyncError from "../middlewares/catchAsyncError.js";
 import Errorhandler from "../middlewares/handle_error.js";
 import { sendJwtToken } from "../middlewares/sendJwtToken.js";
 import { adminModal } from "../models/admin_model.js";
+import nodemailer from "nodemailer";
 
 export const createAdmin = catchAsyncError(async (req, res, next) => {
   const admin = await adminModal.create(req.body);

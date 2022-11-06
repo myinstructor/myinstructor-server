@@ -20,11 +20,7 @@ import { Storage } from "@google-cloud/storage";
 const app = express();
 // applying cors middleware
 
-app.use(
-  cors({
-    origin: ["http://localhost:3000", "https://myinstructor.netlify.app"],
-  })
-);
+app.use(cors());
 // bodyparser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
