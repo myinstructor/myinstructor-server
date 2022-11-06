@@ -14,7 +14,6 @@ const bookingSchema = mongoose.Schema({
   },
   type: {
     type: String,
-    required: true,
   },
   reviewed: {
     type: Boolean,
