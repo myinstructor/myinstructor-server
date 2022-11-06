@@ -4,6 +4,7 @@ import { sendJwtToken } from "../middlewares/sendJwtToken.js";
 import { userModel } from "../models/user_model.js";
 import { gcloudStorage } from "../index.js";
 import { format } from "util";
+import { sendEmail } from "./email_controller.js";
 
 export const registerUser = catchAsyncError(async (req, res, next) => {
   if (!req.body) next(new Errorhandler(404, "Email Or Password Not Found"));
@@ -13,6 +14,7 @@ export const registerUser = catchAsyncError(async (req, res, next) => {
   if (userExist) next(new Errorhandler(500, "User Already Exist"));
 
   const user = await userModel.create(req.body);
+  const emailSuccess = await sendEmail(2, user.email, user.firstName);
 
   sendJwtToken(res, next, user);
 });
