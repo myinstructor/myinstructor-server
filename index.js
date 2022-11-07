@@ -48,7 +48,7 @@ app.use("/uploads", express.static("./tmp"), (req, res, next) => {
 app.get("/", (req, res, next) => {
   res.status(200).json({
     success: true,
-    message: "My Instructor Server Is Up And Running...V3",
+    message: "My Instructor Server Is Up And Running...V4",
   });
 });
 

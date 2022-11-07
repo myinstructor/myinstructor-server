@@ -13,14 +13,18 @@ import {
   singleInstructor,
   updateInstructorAvater,
 } from "../controllers/instructor_controller.js";
-import { verifyInstructor, verifyUser } from "../middlewares/verify_user.js";
+import {
+  verifyAdmin,
+  verifyInstructor,
+  verifyUser,
+} from "../middlewares/verify_user.js";
 import { multerProcess } from "../utils/multer.js";
 
 const router = Router();
 
 router
   .route("/add-instructor")
-  .post(multerProcess.single("avater"), addInstructor);
+  .post(verifyAdmin, multerProcess.single("avater"), addInstructor);
 router.route("/login-instructor").post(loginInstructor);
 router.route("/edit-instructor").put(verifyInstructor, editInstructor);
 router
