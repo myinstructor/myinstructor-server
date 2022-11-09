@@ -6,6 +6,13 @@ import {
   updateBooking,
 } from "../controllers/Admin/admin_bookings.js";
 import {
+  addCar,
+  deleteCar,
+  getAllCars,
+  getSinglecar,
+  updateCar,
+} from "../controllers/Admin/admin_cars.js";
+import {
   createAdmin,
   loginAdmin,
 } from "../controllers/Admin/admin_controller.js";
@@ -22,6 +29,7 @@ import {
   updateUser,
 } from "../controllers/Admin/admin_user.js";
 import { verifyAdmin } from "../middlewares/verify_user.js";
+import { multerProcess } from "../utils/multer.js";
 
 const router = Router();
 
@@ -30,6 +38,11 @@ router.route("/login").post(loginAdmin);
 router.route("/all-users").get(verifyAdmin, getAllUsers);
 router.route("/all-instructors").get(verifyAdmin, getAllInstructors);
 router.route("/all-bookings").get(verifyAdmin, getAllBookings);
+router.route("/all-cars").get(verifyAdmin, getAllCars);
+router
+  .route("/add-car")
+  .post(verifyAdmin, multerProcess.single("avater"), addCar);
+
 router
   .route("/user/:id")
   .get(verifyAdmin, getSingleUser)
@@ -45,4 +58,9 @@ router
   .get(verifyAdmin, getSingleBooking)
   .put(verifyAdmin, updateBooking)
   .delete(verifyAdmin, deleteBooking);
+router
+  .route("/car/:id")
+  .get(verifyAdmin, getSinglecar)
+  .put(verifyAdmin, updateCar)
+  .delete(verifyAdmin, deleteCar);
 export default router;
