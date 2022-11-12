@@ -9,6 +9,10 @@ import { Booking } from "../models/booking_model.js";
 
 export const addInstructor = catchAsyncError(async (req, res, next) => {
   const bucket = gcloudStorage.bucket("my_instructor");
+
+  const car = JSON.parse(req.body.car);
+  const allSubs = JSON.parse(req.body.serviceSuburbs);
+
   // ===========Image upload handleing===============
   if (!req.file) {
     // res.status(400).send("No file uploaded.");
@@ -33,19 +37,21 @@ export const addInstructor = catchAsyncError(async (req, res, next) => {
     );
     console.log(publicUrl);
     // ============create instructor==============
-    const newInstructor = {
-      ...req.body,
-      languages: JSON.parse(req.body.languages),
-      car: JSON.parse(req.body.car),
-      serviceSuburbs: JSON.parse(req.body.serviceSubrubs),
-      avater: publicUrl,
-    };
+
     const userExist = await Instructor.findOne({ email: req.body?.email });
     if (userExist)
       return next(
         new Errorhandler(500, "Instructor Already Exist With This Email")
       );
-    const instructor = await Instructor.create(newInstructor);
+
+    const instructor = await Instructor.create({
+      ...req.body,
+      avater: publicUrl,
+      car,
+      serviceSuburbs: {
+        suburbs: allSubs.suburbs,
+      },
+    });
     console.log(instructor);
     res.status(200).json({
       success: true,

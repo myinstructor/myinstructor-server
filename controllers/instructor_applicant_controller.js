@@ -11,3 +11,12 @@ export const applyInstructor = catchAsyncError(async (req, res, next) => {
     applicant,
   });
 });
+export const getAppliedInstructors = catchAsyncError(async (req, res, next) => {
+  const applicants = await InstructorApplicantModel.find();
+ 
+
+  res.status(200).json({
+    success: true,
+    applicants,
+  });
+});

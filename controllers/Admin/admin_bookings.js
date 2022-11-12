@@ -16,7 +16,7 @@ export const getAllBookings = catchAsyncError(async (req, res, next) => {
 // get single booking================
 export const getSingleBooking = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
-  const booking = await Booking.findById(id);
+  const booking = await Booking.findById(id).populate("user instructor");
 
   if (!booking) return next(new Errorhandler(404, "No booking Found"));
 
