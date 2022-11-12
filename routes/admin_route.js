@@ -29,7 +29,10 @@ import {
   updateUser,
 } from "../controllers/Admin/admin_user.js";
 import { getAppliedInstructors } from "../controllers/instructor_applicant_controller.js";
-import { addInstructor } from "../controllers/instructor_controller.js";
+import {
+  addInstructor,
+  getExpiredInstructor,
+} from "../controllers/instructor_controller.js";
 import { verifyAdmin } from "../middlewares/verify_user.js";
 import { multerProcess } from "../utils/multer.js";
 
@@ -42,6 +45,7 @@ router.route("/all-instructors").get(verifyAdmin, getAllInstructors);
 router.route("/all-bookings").get(verifyAdmin, getAllBookings);
 router.route("/all-cars").get(verifyAdmin, getAllCars);
 router.route("/applied-instructors").get(verifyAdmin, getAppliedInstructors);
+router.route("/expired-instructors").get(getExpiredInstructor);
 router
   .route("/add-car")
   .post(verifyAdmin, multerProcess.single("avater"), addCar);

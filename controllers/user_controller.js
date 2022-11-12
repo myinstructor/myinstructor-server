@@ -14,7 +14,7 @@ export const registerUser = catchAsyncError(async (req, res, next) => {
   if (userExist) next(new Errorhandler(500, "User Already Exist"));
 
   const user = await userModel.create(req.body);
-  const emailSuccess = await sendEmail(2, user.email, user.firstName);
+  const emailSuccess = await sendEmail(2, user.email, user.firstName, " ");
 
   sendJwtToken(res, next, user);
 });

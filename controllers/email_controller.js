@@ -5,13 +5,13 @@ var defaultClient = SibApiV3Sdk.ApiClient.instance;
 // Configure API key authorization: api-key
 var apiKey = defaultClient.authentications["api-key"];
 apiKey.apiKey =
-  "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";
+  "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";
 
 var apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
 var sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail(); // SendSmtpEmail | Values to send a transactional email
 
-export const sendEmail = async (templateid, email, name, ...otherProps) => {
+export const sendEmail = async (templateid, email, name, sms) => {
   sendSmtpEmail = {
     to: [
       {
@@ -21,7 +21,7 @@ export const sendEmail = async (templateid, email, name, ...otherProps) => {
     ],
     templateId: templateid,
     params: {
-      ...otherProps,
+      SMS: sms,
       FIRSTNAME: name,
     },
     headers: {

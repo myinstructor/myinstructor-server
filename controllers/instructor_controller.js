@@ -6,6 +6,7 @@ import { Suburbs } from "../models/subrubs_model.js";
 import { gcloudStorage } from "../index.js";
 import { format } from "util";
 import { Booking } from "../models/booking_model.js";
+import { sendEmail } from "./email_controller.js";
 
 export const addInstructor = catchAsyncError(async (req, res, next) => {
   const bucket = gcloudStorage.bucket("my_instructor");
@@ -13,6 +14,7 @@ export const addInstructor = catchAsyncError(async (req, res, next) => {
   const car = JSON.parse(req.body.car);
   const allSubs = JSON.parse(req.body.serviceSuburbs);
 
+  const languages = JSON.parse(req.body.languages);
   // ===========Image upload handleing===============
   if (!req.file) {
     // res.status(400).send("No file uploaded.");
@@ -48,10 +50,17 @@ export const addInstructor = catchAsyncError(async (req, res, next) => {
       ...req.body,
       avater: publicUrl,
       car,
+      languages,
       serviceSuburbs: {
         suburbs: allSubs.suburbs,
       },
     });
+
+    const sms = `email : ${instructor.email}
+     \n \n
+    password: ${req.body.password}`;
+    sendEmail(3, instructor.email, instructor.firstName, sms);
+
     console.log(instructor);
     res.status(200).json({
       success: true,
@@ -223,6 +232,7 @@ export const editInstructor = catchAsyncError(async (req, res, next) => {
   });
 
   const instructor = await Instructor.findById(req.user._id);
+
   res.status(200).json({
     success: true,
     instructor,
@@ -323,3 +333,24 @@ export const changeInstructorAvailability = catchAsyncError(
     });
   }
 );
+
+export const getExpiredInstructor = catchAsyncError(async (req, res, next) => {
+  const instructors = await Instructor.find({
+    $or: [
+      {
+        drivingLicenseExpire: { $lte: Date.now() },
+      },
+      {
+        instructorLicenseExpire: { $lte: Date.now() },
+      },
+      {
+        childrenCheckLicenseExpire: { $lte: Date.now() },
+      },
+    ],
+  });
+  res.status(200).json({
+    success: true,
+    instructors,
+    date: Date.now(),
+  });
+});

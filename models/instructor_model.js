@@ -29,6 +29,7 @@ const instructorSchema = mongoose.Schema({
       "Please fill a valid email address",
     ],
   },
+
   phone: {
     type: String,
     required: true,
@@ -94,6 +95,18 @@ const instructorSchema = mongoose.Schema({
   resetPasswordTime: {
     type: Date,
     select: false,
+  },
+  drivingLicenseExpire: {
+    type: Date,
+    required: true,
+  },
+  instructorLicenseExpire: {
+    type: Date,
+    required: true,
+  },
+  childrenCheckLicenseExpire: {
+    type: Date,
+    required: true,
   },
   createdAt: {
     type: Date,
