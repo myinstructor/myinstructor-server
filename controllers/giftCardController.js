@@ -20,10 +20,17 @@ export const createGiftcard = catchAsyncError(async (req, res, next) => {
 export const validateCoupon = catchAsyncError(async (req, res, next) => {
   const { code } = req.params;
   const giftcard = await giftCardModel.find({ code });
-  if (!giftcard)
+  if (!giftcard || giftcard.length <= 0)
     return next(new Errorhandler(404, "Giftcard Code Is Not Valid"));
   res.status(200).json({
     success: true,
     giftcard,
+  });
+});
+
+export const deleteGiftcard = catchAsyncError(async (req, res, next) => {
+  const giftcard = await giftCardModel.findByIdAndDelete(req.params?.id);
+  res.status(200).json({
+    success: true,
   });
 });
