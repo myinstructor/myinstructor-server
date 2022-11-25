@@ -3,6 +3,9 @@ import catchAsyncError from "../middlewares/catchAsyncError.js";
 import Errorhandler from "../middlewares/handle_error.js";
 const stripe = Stripe(process.env.STRIPE_KEY);
 
+let outsidePrice = 70;
+let insidePrice = 65;
+
 export const createPaymentIndent = catchAsyncError(async (req, res, next) => {
   const { amount } = req.body;
 
@@ -16,5 +19,15 @@ export const createPaymentIndent = catchAsyncError(async (req, res, next) => {
   res.status(200).json({
     success: true,
     clientSecret: paymentIntent.client_secret,
+  });
+});
+
+export const getLessonPrices = catchAsyncError(async (req, res, next) => {
+  res.status(200).json({
+    success: true,
+    price: {
+      outsidePrice,
+      insidePrice,
+    },
   });
 });
