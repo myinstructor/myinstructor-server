@@ -10,7 +10,9 @@ import paymentRoute from "./routes/payment_route.js";
 import bookingRoute from "./routes/booking_route.js";
 import adminRoute from "./routes/admin_route.js";
 import giftCardRoute from "./routes/giftcard_route.js";
+import { Server } from "socket.io";
 
+import http from "http";
 import path, { dirname } from "path";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -21,6 +23,8 @@ import { allowedorigin, checkOrigin } from "./middlewares/checkOrigin.js";
 // initializing app
 const app = express();
 // applying cors middleware
+
+const server = http.createServer(app);
 
 var corsOptions = {
   origin: allowedorigin,
@@ -66,8 +70,39 @@ export const gcloudStorage = new Storage({
   projectId: "first-energy-364305",
 });
 
+// websocket connection
+// ----------------------
+
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log(socket, "socket information");
+  const users = [];
+  for (let [id, socket] of io.of("/").sockets) {
+    users.push({
+      userID: id,
+      username: socket.username,
+    });
+  }
+
+  console.log(users, "users");
+  socket.on("send_message", (data) => {
+    console.log(data);
+  });
+  socket.emit("users", users);
+  // ...
+});
+
+// ----------------------
+//
+
 // listening to server
-app.listen(PORT, () =>
+server.listen(PORT, () =>
   console.log("Myinstructor server listening to port " + PORT + "...")
 );
 
