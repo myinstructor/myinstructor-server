@@ -34,6 +34,7 @@ import {
   getExpiredInstructor,
 } from "../controllers/instructor_controller.js";
 import { setLessonPrice } from "../controllers/payment_controller.js";
+import { editSuburb } from "../controllers/suburb_controller.js";
 import { verifyAdmin } from "../middlewares/verify_user.js";
 import { multerProcess } from "../utils/multer.js";
 
@@ -48,6 +49,7 @@ router.route("/all-cars").get(verifyAdmin, getAllCars);
 router.route("/applied-instructors").get(verifyAdmin, getAppliedInstructors);
 router.route("/expired-instructors").get(getExpiredInstructor);
 router.route("/set-price").post(setLessonPrice);
+router.route("/edit-suburb/:id").put(editSuburb);
 router
   .route("/add-car")
   .post(verifyAdmin, multerProcess.single("avater"), addCar);

@@ -144,7 +144,7 @@ export const searchInstructor = catchAsyncError(async (req, res, next) => {
 
 // get all suburbs
 export const getAllsuburbs = catchAsyncError(async (req, res, next) => {
-  const suburbs = await Suburbs.find({}).select("suburb state postcode");
+  const suburbs = await Suburbs.find({}).select("suburb state postcode price");
   res.status(200).json({
     success: true,
     suburbs,
