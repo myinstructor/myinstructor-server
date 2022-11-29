@@ -9,6 +9,7 @@ import instructorRoute from "./routes/instructor_routes.js";
 import paymentRoute from "./routes/payment_route.js";
 import bookingRoute from "./routes/booking_route.js";
 import adminRoute from "./routes/admin_route.js";
+import suburbRoute from "./routes/suburb_route.js";
 import giftCardRoute from "./routes/giftcard_route.js";
 import { Server } from "socket.io";
 
@@ -43,6 +44,7 @@ const PORT = process.env.PORT || 5000;
 connectToDatabase();
 
 // App Routes
+// 01818958564
 app.use("/api", userRoutes);
 app.use("/api", instructorApplicantRoute);
 app.use("/api", instructorRoute);
@@ -50,6 +52,7 @@ app.use("/api", paymentRoute);
 app.use("/api", bookingRoute);
 app.use("/api/admin", checkOrigin, adminRoute);
 app.use("/api", giftCardRoute);
+app.use("/api", suburbRoute);
 
 // image request
 app.use("/uploads", express.static("./tmp"), (req, res, next) => {
@@ -81,7 +84,7 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log(socket, "socket information");
+  // console.log(socket, "socket information");
   const users = [];
   for (let [id, socket] of io.of("/").sockets) {
     users.push({
