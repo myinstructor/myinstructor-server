@@ -11,6 +11,7 @@ import bookingRoute from "./routes/booking_route.js";
 import adminRoute from "./routes/admin_route.js";
 import suburbRoute from "./routes/suburb_route.js";
 import giftCardRoute from "./routes/giftcard_route.js";
+import conversationRoute from "./routes/conversation_route.js";
 import { Server } from "socket.io";
 
 import http from "http";
@@ -53,6 +54,7 @@ app.use("/api", bookingRoute);
 app.use("/api/admin", checkOrigin, adminRoute);
 app.use("/api", giftCardRoute);
 app.use("/api", suburbRoute);
+app.use("/api/convo", conversationRoute);
 
 // image request
 app.use("/uploads", express.static("./tmp"), (req, res, next) => {
