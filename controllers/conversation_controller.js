@@ -65,3 +65,15 @@ export const getConvoMessage = catchAsyncError(async (req, res, next) => {
     messages: allMessages,
   });
 });
+
+export const getConversation = catchAsyncError(async (req, res, next) => {
+  const convo = await conversations.find({}).populate("conversations");
+  const convos = convo[0]["conversations"];
+  console.log(convos, "convos");
+
+  res.status(200).json({
+    success: true,
+
+    conversations: convos,
+  });
+});
