@@ -85,22 +85,24 @@ const io = new Server(server, {
   },
 });
 
-io.on("connection", (socket) => {
-  // console.log(socket, "socket information");
-  const users = [];
-  for (let [id, socket] of io.of("/").sockets) {
-    users.push({
-      userID: id,
-      username: socket.username,
-    });
-  }
+let socketUsers = [];
+// socket users methods
+const removeUser = (socketId) => {
+  const removedArray = socketUsers.filter((user) => user.socketId !== socketId);
+  socketUsers = removedArray;
+};
 
-  console.log(users, "users");
-  socket.on("send_message", (data) => {
-    console.log(data);
+// connecting io
+io.on("connection", (socket) => {
+  socket.on("add_user", (data) => {
+    socketUsers.push({ ...data, socketId: socket.id });
+    io.emit("connected_users", socketUsers);
   });
-  socket.emit("users", users);
-  // ...
+
+  socket.on("disconnect", () => {
+    removeUser(socket.id);
+    io.emit("connected_users", socketUsers);
+  });
 });
 
 // ----------------------

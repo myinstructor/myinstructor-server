@@ -56,10 +56,15 @@ export const getConvoMessage = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
 
   if (!id) return next(new Errorhandler(404, "Id Not Found"));
+  const user = await userModel.findById(id);
+  const instructor = await Instructor.findById(id);
 
   const allMessages = await messages
     .find()
-    .or([{ from: { $regex: id } }, { to: { $regex: id } }]);
+    .or([
+      { from: { $regex: user?._id || instructor?._id } },
+      { to: { $regex: user?._id || instructor?._id } },
+    ]);
   res.status(200).json({
     success: true,
     messages: allMessages,
