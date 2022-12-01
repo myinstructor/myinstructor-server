@@ -103,6 +103,16 @@ io.on("connection", (socket) => {
     removeUser(socket.id);
     io.emit("connected_users", socketUsers);
   });
+
+  socket.on("send_message_to_admin", (message) => {
+    console.log(message, "message");
+    io.to(message.to).emit("recieve_message_admin", message);
+  });
+
+  socket.on("send__message", (message) => {
+    console.log(message, "message");
+    io.to(message.to).emit("recieve_message_user", message);
+  });
 });
 
 // ----------------------
