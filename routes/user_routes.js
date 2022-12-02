@@ -8,6 +8,7 @@ import {
   getCurrentUser,
   editUser,
   updateProfilePic,
+  uploadFilesToServer,
 } from "../controllers/user_controller.js";
 import { multerProcess } from "../utils/multer.js";
 import { verifyUser } from "../middlewares/verify_user.js";
@@ -23,4 +24,7 @@ router
 router.route("/forgot-password").post(forgetPassword);
 router.route("/reset-password").post(resetPassword);
 router.route("/add-credit").post(verifyUser, addCredit);
+router
+  .route("/upload-files")
+  .post(multerProcess.single("avater"), uploadFilesToServer);
 export default router;

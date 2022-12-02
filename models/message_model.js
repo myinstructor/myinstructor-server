@@ -16,6 +16,10 @@ const messageSchema = Schema(
       type: String,
       required: true,
     },
+    messageType: {
+      type: String,
+      default: "text",
+    },
   },
   { timestamps: true }
 );
