@@ -144,7 +144,7 @@ export const searchInstructor = catchAsyncError(async (req, res, next) => {
 
 // get all suburbs
 export const getAllsuburbs = catchAsyncError(async (req, res, next) => {
-  const suburbs = await Suburbs.find({}).select("suburb state postcode");
+  const suburbs = await Suburbs.find({}).select("suburb state postcode price");
   res.status(200).json({
     success: true,
     suburbs,
@@ -155,11 +155,11 @@ export const searchsuburbs = catchAsyncError(async (req, res, next) => {
   const { keyword } = req.params;
   const suburbsKeyword = await Suburbs.find({
     suburb: { $regex: keyword, $options: "i" },
-  }).select("suburb state postcode");
+  }).select("suburb state postcode price");
 
   const suburbPostcode = await Suburbs.find({
     postcode: parseInt(keyword),
-  }).select("suburb state postcode");
+  }).select("suburb state postcode price");
 
   let suburbs = [];
   suburbs = [...suburbsKeyword, ...suburbPostcode];
